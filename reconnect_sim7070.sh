@@ -14,17 +14,15 @@ while true; do
                         sudo pon
                 else
                         sudo ifconfig wwan0 down
-                        gpio -g mode 7 out
-                        gpio -g write 7 1
+                        gpio mode 4 out
+                        gpio write 4 1
                         sleep 1.5
-                        gpio -g write 7 0
+                        gpio write 4 0
                         sleep 10
-                        gpio -g write 7 0
-                        sleep 1.2
-                        gpio -g write 7 1
+                        gpio write 4 1
                         sleep 0.3
-                        gpio -g write 7 0
-                        sleep 5
+                        gpio write 4 0
+                        sleep 10
                         sudo pon
                 fi
                 i++
