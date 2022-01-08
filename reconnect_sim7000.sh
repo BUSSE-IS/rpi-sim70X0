@@ -1,9 +1,8 @@
 #!/bin/sh
 
 while true; do
-
-        ping -I ppp0 -c 1 8.8.8.8 -s 0
         i=0
+        ping -I ppp0 -c 1 8.8.8.8 -s 0
         if [ $? -eq 0 ]; then
                 echo "Connection up, reconnect not required..."
                 i=0
@@ -27,7 +26,7 @@ while true; do
                         sudo ifconfig wwan0 down
                         sudo pon
                 fi
-                i++
+                i = i+1
         fi
         sleep 10
 done
