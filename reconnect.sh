@@ -13,7 +13,7 @@ function restart_power()
         gpio -g write 7 0
         sleep 10
 }
-
+i=0
 while true; do
     # Checking cellular internet connection
     ping -q -c 1 -s 0 -w $PING_TIMEOUT -I ppp0 8.8.8.8 > /dev/null 2>&1
@@ -21,6 +21,7 @@ while true; do
 
     if [[ $PINGG -eq 0 ]]; then
         print "."
+	i=0
     else
         print "/"
         sleep 10
@@ -30,8 +31,9 @@ while true; do
 
         if [[ $PINGG -eq 0 ]]; then
             print "+"
-        else
-	    debug "Connection is down, reconnecting..."      
+	    i=0
+        elif [[ $PINGG -eq 0 ]] && [[ $i -le 10 ]]; then
+	    print "Connection is down, reconnecting..."      
 	    restart_power
 	    sudo pon
 	    sudo /etc/init.d/rinetd start
@@ -40,8 +42,11 @@ while true; do
 	    route | grep ppp | grep default > /dev/null
 	    PPP_IS_DEFAULT=$?
 	    if [[ $PPP_IS_DEFAULT -ne 0 ]]; then sudo route add default ppp0; print "ppp0 is added as default interface manually."; fi
+	    ((i=i+1))
+	elif [[ $PINGG -eq 0 ]] && [[ $i -gt 10 ]]; then
+	    print "Reboot indicated because too many reconnect failures."
+	    sudo shutdown -r now
 	fi
-      
     fi
     sleep 60
 done
