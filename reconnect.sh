@@ -1,0 +1,39 @@
+function restart_power()
+{
+	debug "Power of the module is restarting..."
+	# Restart power
+	gpio -g write $ENABLE 1 # power is disabled 
+	sleep 2
+	gpio -g write $ENABLE 0 # power is enabled
+}
+
+while true; do
+    # Checking cellular internet connection
+    ping -q -c 1 -s 0 -w $PING_TIMEOUT -I ppp0 8.8.8.8 > /dev/null 2>&1
+    PINGG=$?
+
+    if [[ $PINGG -eq 0 ]]; then
+        printf "."
+    else
+        printf "/"
+        sleep 10
+	    # Checking cellular internet connection
+        ping -q -c 1 -s 0 -w $PING_TIMEOUT -I ppp0 8.8.8.8 > /dev/null 2>&1
+        PINGG=$?
+
+        if [[ $PINGG -eq 0 ]]; then
+            printf "+"
+        else
+	        debug "Connection is down, reconnecting..."      
+			restart_power
+	    sudo pon
+			
+			# check default interface
+			route | grep ppp | grep default > /dev/null
+			PPP_IS_DEFAULT=$?
+			if [[ $PPP_IS_DEFAULT -ne 0 ]]; then sudo route add default ppp0; debug "ppp0 is added as default interface manually."; fi
+	    fi
+      
+    fi
+	sleep 60
+done
