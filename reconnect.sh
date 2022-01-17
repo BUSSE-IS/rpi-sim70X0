@@ -2,9 +2,16 @@ function restart_power()
 {
 	debug "Power of the module is restarting..."
 	# Restart power
-	gpio -g write $ENABLE 1 # power is disabled 
-	sleep 2
-	gpio -g write $ENABLE 0 # power is enabled
+	sudo ifconfig wwan0 down
+        gpio mode 7 out
+        gpio -g write 7 1
+        sleep 1.5
+        gpio -g write 7 0
+        sleep 10
+        gpio -g write 7 1
+        sleep 0.3
+        gpio -g write 7 0
+        sleep 10
 }
 
 while true; do
@@ -24,8 +31,8 @@ while true; do
         if [[ $PINGG -eq 0 ]]; then
             printf "+"
         else
-	        debug "Connection is down, reconnecting..."      
-			restart_power
+	    debug "Connection is down, reconnecting..."      
+	    restart_power
 	    sudo pon
 			
 			# check default interface
