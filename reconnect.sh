@@ -35,8 +35,9 @@ while true; do
         elif [[ $PINGG -eq 0 ]] && [[ $i -le 10 ]]; then
 	    print "Connection is down, reconnecting..."      
 	    restart_power
+	    sudo ifconfig wwan0 down
 	    sudo pon
-	    sudo /etc/init.d/rinetd start
+	    sudo /etc/init.d/rinetd restart
 			
 	    # check default interface
 	    route | grep ppp | grep default > /dev/null
@@ -45,6 +46,7 @@ while true; do
 	    ((i=i+1))
 	elif [[ $PINGG -eq 0 ]] && [[ $i -gt 10 ]]; then
 	    print "Reboot indicated because too many reconnect failures."
+	    sleep 5
 	    sudo shutdown -r now
 	fi
     fi
