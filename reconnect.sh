@@ -32,8 +32,9 @@ while true; do
         if [[ $PINGG -eq 0 ]]; then
             echo "+"
 	    i=0
-        elif [[ $PINGG -eq 0 ]] && [[ $i -le 10 ]]; then
-	    echo "Connection is down, reconnecting..."      
+        elif [[ $PINGG -ne 0 ]] && [[ $i -le 10 ]]; then
+	    echo "Connection is down, reconnecting..."
+	    sudo poff
 	    restart_power
 	    sudo ifconfig wwan0 down
 	    sudo pon
@@ -44,7 +45,7 @@ while true; do
 	    PPP_IS_DEFAULT=$?
 	    if [[ $PPP_IS_DEFAULT -ne 0 ]]; then sudo route add default ppp0; echo "ppp0 is added as default interface manually."; fi
 	    ((i=i+1))
-	elif [[ $PINGG -eq 0 ]] && [[ $i -gt 10 ]]; then
+	elif [[ $PINGG -ne 0 ]] && [[ $i -gt 10 ]]; then
 	    echo "Reboot indicated because too many reconnect failures."
 	    sleep 5
 	    sudo shutdown -r now
