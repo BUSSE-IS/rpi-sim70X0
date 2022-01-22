@@ -1,6 +1,6 @@
 function restart_power()
 {
-	print "Power of the module is restarting..."
+	echo "Power of the module is restarting..."
 	# Restart power
 	sudo ifconfig wwan0 down
         gpio mode 7 out
