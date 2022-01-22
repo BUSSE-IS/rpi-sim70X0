@@ -38,11 +38,6 @@ while true; do
             restart_power
             sudo pon
             sudo /etc/init.d/rinetd restart
-
-            # check default interface
-            route | grep ppp | grep default > /dev/null
-            PPP_IS_DEFAULT=$?
-            if [[ $PPP_IS_DEFAULT -ne 0 ]]; then sudo route add default ppp0; echo "ppp0 is added as default interface manually."; fi
             ((i=i+1))
         elif [[ $PINGG -ne 0 ]] && [[ $i -gt 10 ]]; then
             echo "Reboot indicated because too many reconnect failures."
