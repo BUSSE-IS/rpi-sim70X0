@@ -4,13 +4,13 @@ function restart_power()
         # Restart power
         sudo ifconfig wwan0 down
         gpio mode 7 out
-        gpio -g write 7 1
+        gpio write 7 1
         sleep 1.5
-        gpio -g write 7 0
+        gpio write 7 0
         sleep 10
-        gpio -g write 7 1
+        gpio write 7 1
         sleep 0.3
-        gpio -g write 7 0
+        gpio write 7 0
         sleep 10
 }
 i=0
