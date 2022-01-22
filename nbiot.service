@@ -3,7 +3,7 @@ Description=PPP Auto Connection
 After=network.target
 
 [Service]
-ExecStart=/bin/sh /usr/src/reconnect.sh
+ExecStart=/bin/bash /usr/src/reconnect.sh
 WorkingDirectory=/usr/src/
 StandardOutput=inherit
 StandardError=inherit
