@@ -1,7 +1,7 @@
 # /etc/ppp/peers/provider
-/dev/#DEVICE 115200
+/dev/ttyUSB2 115200
 # The chat script, customize your APN in this file
-connect 'chat -s -v -f /etc/chatscripts/chat-connect -T #APN'
+connect 'chat -s -v -f /etc/chatscripts/chat-connect -T iot.1nce.net'
 # The close script
 disconnect 'chat -s -v -f /etc/chatscripts/chat-disconnect'
 # Hide password in debug messages
