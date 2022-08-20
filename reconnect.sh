@@ -25,25 +25,25 @@ while true; do
     else
         echo "/"
         sleep 2
-            # Checking cellular internet connection
+            # Checking cellular internet connection again
         ping -q -c 1 -s 0 -w 2 -I ppp0 8.8.8.8 > /dev/null 2>&1
         PINGG=$?
 
         if [[ $PINGG -eq 0 ]]; then
             echo "+"
             i=0
-        elif [[ $PINGG -ne 0 ]] && [[ $i -le 10 ]]; then
+        elif [[ $PINGG -ne 0 ]] && [[ $i -le 15 ]]; then
             echo "Connection is down, reconnecting..."
             sudo poff
             restart_power
             sudo pon
             sudo /etc/init.d/rinetd restart
             ((i=i+1))
-        elif [[ $PINGG -ne 0 ]] && [[ $i -gt 10 ]]; then
+        elif [[ $PINGG -ne 0 ]] && [[ $i -gt 15 ]]; then
             echo "Reboot indicated because too many reconnect failures."
             sleep 5
             sudo shutdown -r now
         fi
     fi
-    sleep 60
+    sleep 120
 done
