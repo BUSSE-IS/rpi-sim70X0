@@ -32,18 +32,18 @@ while true; do
         if [[ $PINGG -eq 0 ]]; then
             echo "+"
             i=0
-        elif [[ $PINGG -ne 0 ]] && [[ $i -le 15 ]]; then
+        elif [[ $PINGG -ne 0 ]] && [[ $i -le 30 ]]; then
             echo "Connection is down, reconnecting..."
             sudo poff
             restart_power
             sudo pon
             sudo /etc/init.d/rinetd restart
             ((i=i+1))
-        elif [[ $PINGG -ne 0 ]] && [[ $i -gt 15 ]]; then
+        elif [[ $PINGG -ne 0 ]] && [[ $i -gt 30 ]]; then
             echo "Reboot indicated because too many reconnect failures."
             sleep 5
             sudo shutdown -r now
         fi
     fi
-    sleep 120
+    sleep 180
 done
