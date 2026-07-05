@@ -1,16 +1,31 @@
+function set_power_pin()
+{
+        # SIM module power key is BCM GPIO 4 (= WiringPi pin 7).
+        # Prefer pinctrl (ships with Raspberry Pi OS Bookworm/Trixie);
+        # fall back to the legacy WiringPi gpio binary on older devices.
+        if command -v pinctrl > /dev/null 2>&1; then
+                if [ "$1" = "1" ]; then
+                        pinctrl set 4 op dh
+                else
+                        pinctrl set 4 op dl
+                fi
+        else
+                gpio mode 7 out
+                gpio write 7 "$1"
+        fi
+}
 function restart_power()
 {
         echo "Power of the module is restarting..."
         # Restart power
         sudo ifconfig wwan0 down
-        gpio mode 7 out
-        gpio write 7 1
+        set_power_pin 1
         sleep 1.5
-        gpio write 7 0
+        set_power_pin 0
         sleep 10
-        gpio write 7 1
+        set_power_pin 1
         sleep 0.3
-        gpio write 7 0
+        set_power_pin 0
         sleep 10
 }
 i=0
@@ -36,8 +51,12 @@ while true; do
             echo "Connection is down, reconnecting..."
             sudo poff
             restart_power
-            sudo pon
-            sudo /etc/init.d/rinetd restart
+            # timeout: pppd (persist+updetach) can otherwise block here forever
+            # and the reboot fallback below would never be reached
+            sudo timeout 300 pon
+            # try-restart: only restart rinetd if it is running; the old
+            # 'init.d restart' started rinetd on every boot even when disabled
+            sudo systemctl try-restart rinetd
             ((i=i+1))
         elif [[ $PINGG -ne 0 ]] && [[ $i -gt 30 ]]; then
             echo "Reboot indicated because too many reconnect failures."
